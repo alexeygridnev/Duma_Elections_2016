@@ -6,7 +6,7 @@ import requests
 
 
 #for singe-mandate districts:
-def fptp(url, lbl,typetable):
+def fptp(url, lbl):
 #getting OIK names
     pageforcrawling=requests.get(url)
     start=pageforcrawling.text.find('Нижестоящие избирательные комиссии')
@@ -71,7 +71,7 @@ def fptp(url, lbl,typetable):
         filecsv.close()
 
 #for party lists:
-def pr(url, lbl, typetable):
+def pr(url, lbl):
     #writing a codebook:
     file=open(lbl+ ' codebook PR.txt', "w")
     file.write(textpr)
@@ -165,12 +165,12 @@ def connectionerror():
     errorlabel2.pack()
     errorbutton.pack(side="bottom")
         
-def guistart(region, t_elect, typetable):
+def guistart(region, t_elect):
     url=listdict.get(region)
     if t_elect=="По одномандатным округам":
-        fptp(url, region, typetable)
+        fptp(url, region)
     elif t_elect=="По партийным спискам":
-        pr(url, region, typetable)
+        pr(url, region)
 
 #GUI
 root=Tk()
