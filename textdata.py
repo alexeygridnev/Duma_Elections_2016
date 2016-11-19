@@ -87,6 +87,7 @@ listdict={'''Республика Адыгея''': '''http://www.adygei.vybory.i
 '''Ямало-Ненецкий АО''':	'''http://www.yamal-nenetsk.vybory.izbirkom.ru/region/yamal-nenetsk?action=show&global=1&vrn=100100067795849&region=89&prver=0&pronetvd=0''',
 }
 
+#Content of the codebook for PR system of elections
 textpr = '''v1      Номер УИК 
 v2 	Число избирателей, внесенных в список избирателей на момент окончания голосования 
 v3 	Число избирательных бюллетеней, полученных участковой избирательной комиссией
