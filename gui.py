@@ -174,10 +174,11 @@ def guistart(region, t_elect):
 
 #GUI
 root=Tk()
-root.title('Выборы депутатов ГД ФС РФ 2016')
+root.title('Выборы депутатов ГД ФС РФ 2016') #Parliamentary elections 2016
 root.geometry('400x200')
 root.resizable(False, False)
-labelreg=Label(root,text='Выберите регион')
+labelreg=Label(root,text='Выберите регион') #Choose the region 
+#List items represents all Russian regions
 comboboxreg = Combobox(root,values = ['''Республика Адыгея''',
 '''Республика Алтай''',
 '''Республика Башкортостан''',
@@ -265,13 +266,15 @@ comboboxreg = Combobox(root,values = ['''Республика Адыгея''',
 '''Ямало-Ненецкий АО''',
 ],height=10, width=30, state="readonly")
 comboboxreg.set('Республика Адыгея')
-labeltype=Label(root, text='Выберите систему выборов')
+labeltype=Label(root, text='Выберите систему выборов') #Choose electoral system 
+#in Russia, half of MPs are elected by FPTP system and another half are elected by PR system
+#Options represent a choice between FPTP and PR 
 comboboxtype=Combobox(root, values=['''По одномандатным округам''',
 '''По партийным спискам'''], width=30, state="readonly")
 comboboxtype.set('По одномандатным округам')
 labelact=Label(root, text='')
 labelact.pack()
-btn=Button(root,text='Скачать данные в текущую папку', command=start)
+btn=Button(root,text='Скачать данные в текущую папку', command=start) #Download the data to the current folder
 
 labelreg.pack()
 comboboxreg.pack()
