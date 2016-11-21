@@ -40,7 +40,7 @@ def fptp(url, lbl):
 
     #writing each codebook in a separate file
     for n in range(len(codebooklist)):
-        file=open(lbl+' codebook '+str(n+1)+'.txt', "w", coding="utf-8")
+        file=open(lbl+' codebook '+str(n+1)+'.txt', "w")
         for p in range(len(codebooklist[n])):
             file.write('v'+str(p+1)+'-' + codebooklist[n][p]+'\n')
             root.update()
@@ -48,7 +48,7 @@ def fptp(url, lbl):
         
     ###opening csv file for each OIK
     for num_tik_row in range(len(listingfin)):
-        filecsv=open(lbl+' FPTP '+str(num_tik_row+1)+".csv", "w", coding="utf-8")
+        filecsv=open(lbl+' FPTP '+str(num_tik_row+1)+".csv", "w")
         filename=lbl+' FPTP '+str(num_tik_row+1)+".csv"
 
     #writing variable names for each csv file
@@ -73,7 +73,7 @@ def fptp(url, lbl):
 #for party lists:
 def pr(url, lbl):
     #writing a codebook:
-    file=open(lbl+ ' codebook PR.txt', "w", coding="utf-8")
+    file=open(lbl+ ' codebook PR.txt', "w")
     file.write(textpr)
     file.close()
     
@@ -97,8 +97,8 @@ def pr(url, lbl):
         root.update()
     
     ###opening csv
-    filecsv=open(lbl+' PR.csv', "w", coding="utf-8")
-    filename=(lbl+' PR.csv', coding="utf-8")
+    filecsv=open(lbl+' PR.csv', "w")
+    filename=(lbl+' PR.csv')
     #writing variable names for the csv file
     for vlength in range(19):
         filecsv.write('v'+str(vlength+1)+',')
@@ -140,7 +140,6 @@ def start():
         labelact.configure(text='Готово!')
         comboboxreg.config(state='readonly')
         comboboxtype.config(state='readonly')
-        comboboxtypetab.config(state='readonly')
         btn.config(state='normal')
         root.update()
     except requests.exceptions.ConnectionError:
