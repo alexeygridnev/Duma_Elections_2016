@@ -136,7 +136,7 @@ def start():
     labelact.pack()
     root.update()
     try:
-        guistart(reg, t_elect, typetable)
+        guistart(reg, t_elect)
         labelact.configure(text='Готово!')
         comboboxreg.config(state='readonly')
         comboboxtype.config(state='readonly')
