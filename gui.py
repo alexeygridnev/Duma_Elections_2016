@@ -8,6 +8,7 @@ import requests
 #for singe-mandate districts:
 def fptp(url, lbl):
 #getting OIK names
+    progbar.start()
     pageforcrawling=requests.get(url)
     start=pageforcrawling.text.find('Нижестоящие избирательные комиссии')
     end=pageforcrawling.text.find('</select>')
@@ -32,17 +33,21 @@ def fptp(url, lbl):
     for num_tik_row in range(len(listingfin)):
         try:
             codebooklist.append(reqvarnames(getpageuik(getlistuik(listingfin[num_tik_row][0])[0])))
+            progbar.step(amount=3)
             root.update()
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
             connectionerror()
+            progbar.stop()
         except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
             continue
 
     #writing each codebook in a separate file
     for n in range(len(codebooklist)):
         file=open(lbl+' codebook '+str(n+1)+'.txt', encoding="utf-8", mode="w")
+        progbar.step(amount=3)
         for p in range(len(codebooklist[n])):
             file.write('v'+str(p+1)+'-' + codebooklist[n][p]+'\n')
+            progbar.step(amount=3)
             root.update()
         file.close()
         
@@ -54,6 +59,8 @@ def fptp(url, lbl):
     #writing variable names for each csv file
         for vlength in range(len(codebooklist[num_tik_row])):
             filecsv.write('v'+str(vlength+1)+',')
+            progbar.step(amount=3)
+            root.update()
         filecsv.write('\n')
 
     #getting the data for each csv file
@@ -61,17 +68,21 @@ def fptp(url, lbl):
             for num_tik_col in range(len(listingfin[num_tik_row])):
                 for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
                     filecsv.write(reqdata(getpageuik(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
+                    progbar.step(amount=3)
                     root.update()       
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
             filecsv.close()
             connectionerror()
+            progbar.stop()
             root.update()
         except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
             continue
         filecsv.close()
+        progbar.stop()
 
 #for party lists:
 def pr(url, lbl):
+    progbar.start()
     #writing a codebook:
     file=open(lbl+ ' codebook PR.txt', encoding="utf-8", mode="w")
     file.write(textpr)
@@ -94,6 +105,7 @@ def pr(url, lbl):
     listingfin=[]
     for k in range (len(listing)-1):
         listingfin.append(gettik(listing[k]))
+        progbar.step(amount=3)
         root.update()
     
     ###opening csv
@@ -102,8 +114,10 @@ def pr(url, lbl):
     #writing variable names for the csv file
     for vlength in range(19):
         filecsv.write('v'+str(vlength+1)+',')
+        progbar.step(amount=3)
     for vlength in range(19, 33):
         filecsv.write('v'+ str(vlength+1)+',' + 'v'+str(vlength+1)+'.1,')
+        progbar.step(amount=3)
     filecsv.write('\n')
 
     #getting the data for the csv file
@@ -113,15 +127,18 @@ def pr(url, lbl):
                 for num_tik_col in range(len(listingfin[num_tik_row])):
                     for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
                         filecsv.write(reqdata(getpageuik_pr(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
+                        progbar.step(amount=3)
                         root.update()
             except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
                 continue
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         filecsv.close()
         connectionerror()
+        progbar.stop()
         root.update()
 
     filecsv.close()
+    progbar.stop()
 
 
 #button press command:
@@ -274,11 +291,14 @@ comboboxtype.set('По одномандатным округам')
 labelact=Label(root, text='')
 labelact.pack()
 btn=Button(root,text='Скачать данные в текущую папку', command=start) #Download the data to the current folder
+progbar=Progressbar(orient="horizontal", length=150, mode="indeterminate")
+
 
 labelreg.pack()
 comboboxreg.pack()
 labeltype.pack()
 comboboxtype.pack()
+progbar.pack()
 labelact.pack(side="bottom")
 btn.pack(side="bottom")
 root.mainloop()
