@@ -35,7 +35,7 @@ def fptp(url, lbl):
             root.update()
         except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
             connectionerror()
-        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema):
+        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
             continue
 
     #writing each codebook in a separate file
@@ -66,7 +66,7 @@ def fptp(url, lbl):
             filecsv.close()
             connectionerror()
             root.update()
-        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema):
+        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
             continue
         filecsv.close()
 
@@ -114,7 +114,7 @@ def pr(url, lbl):
                     for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
                         filecsv.write(reqdata(getpageuik_pr(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
                         root.update()
-            except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema):
+            except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
                 continue
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         filecsv.close()
