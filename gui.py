@@ -171,6 +171,7 @@ def start():
     comboboxreg.config(state='readonly')
     comboboxtype.config(state='readonly')
     btn.config(state='normal')
+    progbar.stop()
     root.update()
 
 
