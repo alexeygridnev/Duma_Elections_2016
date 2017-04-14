@@ -9,136 +9,150 @@ import requests
 def fptp(url, lbl):
 #getting OIK names
     progbar.start()
-    pageforcrawling=requests.get(url)
-    start=pageforcrawling.text.find('Нижестоящие избирательные комиссии')
-    end=pageforcrawling.text.find('</select>')
-    workingpage=pageforcrawling.text[start:end]
-    listing=workingpage.split('</option>')
-    listing=listing[1:len(listing)]
-    for i in range(len(listing)):
-        listing[i]=listing[i].lstrip('<option value="')
-        listing[i].find('"')
-        listing[i]=listing[i] [0:(listing[i].find('"'))]
-        listing[i]=listing[i].replace('amp;', '')
-        root.update()
-
-    listingfin=[]
-    for k in range (len(listing)-1):
-        listingfin.append(gettik(listing[k]))
-        root.update()
-    
-    codebooklist=[]
-
-    #getting codebook for each district, from the page of 0th UIK from 0th TIK for each district
-    for num_tik_row in range(len(listingfin)):
-        try:
-            codebooklist.append(reqvarnames(getpageuik(getlistuik(listingfin[num_tik_row][0])[0])))
-            progbar.step(amount=3)
+    flag=1
+    try:
+        pageforcrawling=requests.get(url)
+    except requests.exceptions.ConnectionError:
+        flag=0
+    if flag==0:
+        connectionerror()
+    else:    
+        start=pageforcrawling.text.find('Нижестоящие избирательные комиссии')
+        end=pageforcrawling.text.find('</select>')
+        workingpage=pageforcrawling.text[start:end]
+        listing=workingpage.split('</option>')
+        listing=listing[1:len(listing)]
+        for i in range(len(listing)):
+            listing[i]=listing[i].lstrip('<option value="')
+            listing[i].find('"')
+            listing[i]=listing[i] [0:(listing[i].find('"'))]
+            listing[i]=listing[i].replace('amp;', '')
             root.update()
-        except RecursionError:
-            connectionerror()
-            progbar.stop()
-        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
-            continue
 
-    #writing each codebook in a separate file
-    for n in range(len(codebooklist)):
-        file=open(lbl+' codebook '+str(n+1)+'.txt', encoding="utf-8", mode="w")
-        progbar.step(amount=3)
-        for p in range(len(codebooklist[n])):
-            file.write('v'+str(p+1)+'-' + codebooklist[n][p]+'\n')
-            progbar.step(amount=3)
+        listingfin=[]
+        for k in range (len(listing)-1):
+            listingfin.append(gettik(listing[k]))
             root.update()
-        file.close()
-        
-    ###opening csv file for each OIK
-    for num_tik_row in range(len(listingfin)):
-        filecsv=open(lbl+' FPTP '+str(num_tik_row+1)+".csv", encoding="utf-8", mode="w")
-        filename=lbl+' FPTP '+str(num_tik_row+1)+".csv"
 
-    #writing variable names for each csv file
-        for vlength in range(len(codebooklist[num_tik_row])):
-            filecsv.write('v'+str(vlength+1)+',')
+        codebooklist=[]
+
+        #getting codebook for each district, from the page of 0th UIK from 0th TIK for each district
+        for num_tik_row in range(len(listingfin)):
+            try:
+                codebooklist.append(reqvarnames(getpageuik(getlistuik(listingfin[num_tik_row][0])[0])))
+                progbar.step(amount=3)
+                root.update()
+            except RecursionError:
+                connectionerror()
+                progbar.stop()
+            except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
+                continue
+
+        #writing each codebook in a separate file
+        for n in range(len(codebooklist)):
+            file=open(lbl+' codebook '+str(n+1)+'.txt', encoding="utf-8", mode="w")
             progbar.step(amount=3)
-            root.update()
-        filecsv.write('\n')
+            for p in range(len(codebooklist[n])):
+                file.write('v'+str(p+1)+'-' + codebooklist[n][p]+'\n')
+                progbar.step(amount=3)
+                root.update()
+            file.close()
 
-    #getting the data for each csv file
-        try:
-            for num_tik_col in range(len(listingfin[num_tik_row])):
-                for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
-                    filecsv.write(reqdata(getpageuik(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
-                    progbar.step(amount=3)
-                    root.update()       
-        except RecursionError:
+        ###opening csv file for each OIK
+        for num_tik_row in range(len(listingfin)):
+            filecsv=open(lbl+' FPTP '+str(num_tik_row+1)+".csv", encoding="utf-8", mode="w")
+            filename=lbl+' FPTP '+str(num_tik_row+1)+".csv"
+
+        #writing variable names for each csv file
+            for vlength in range(len(codebooklist[num_tik_row])):
+                filecsv.write('v'+str(vlength+1)+',')
+                progbar.step(amount=3)
+                root.update()
+            filecsv.write('\n')
+
+        #getting the data for each csv file
+            try:
+                for num_tik_col in range(len(listingfin[num_tik_row])):
+                    for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
+                        filecsv.write(reqdata(getpageuik(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
+                        progbar.step(amount=3)
+                        root.update()       
+            except RecursionError:
+                filecsv.close()
+                connectionerror()
+                progbar.stop()
+                root.update()
+            except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
+                continue
             filecsv.close()
-            connectionerror()
             progbar.stop()
-            root.update()
-        except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
-            continue
-        filecsv.close()
-        progbar.stop()
 
 #for party lists:
 def pr(url, lbl):
     progbar.start()
+    flag=0
     #writing a codebook:
     file=open(lbl+ ' codebook PR.txt', encoding="utf-8", mode="w")
     file.write(textpr)
     file.close()
     
     #getting OIK names
-    pageforcrawling=requests.get(url)
-    start=pageforcrawling.text.find('Нижестоящие избирательные комиссии')
-    end=pageforcrawling.text.find('</select>')
-    workingpage=pageforcrawling.text[start:end]
-    listing=workingpage.split('</option>')
-    listing=listing[1:len(listing)]
-    for i in range(0, len(listing)):
-        listing[i]=listing[i].lstrip('<option value="')
-        listing[i].find('"')
-        listing[i]=listing[i] [0:(listing[i].find('"'))]
-        listing[i]=listing[i].replace('amp;', '')
-        root.update()
-
-    listingfin=[]
-    for k in range (len(listing)-1):
-        listingfin.append(gettik(listing[k]))
-        progbar.step(amount=3)
-        root.update()
-    
-    ###opening csv
-    filecsv=open(lbl+' PR.csv', encoding="utf-8", mode="w")
-    filename=(lbl+' PR.csv')
-    #writing variable names for the csv file
-    for vlength in range(19):
-        filecsv.write('v'+str(vlength+1)+',')
-        progbar.step(amount=3)
-    for vlength in range(19, 33):
-        filecsv.write('v'+ str(vlength+1)+',' + 'v'+str(vlength+1)+'.1,')
-        progbar.step(amount=3)
-    filecsv.write('\n')
-
-    #getting the data for the csv file
     try:
-        for num_tik_row in range(len(listingfin)):
-            try:
-                for num_tik_col in range(len(listingfin[num_tik_row])):
-                    for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
-                        filecsv.write(reqdata(getpageuik_pr(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
-                        progbar.step(amount=3)
-                        root.update()
-            except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
-                continue
-    except RecursionError:
-        filecsv.close()
+        pageforcrawling=requests.get(url)
+    except requests.exceptions.ConnectionError:
+        flag=0
+    if flag==0:
         connectionerror()
-        progbar.stop()
-        root.update()
+    else:
+        start=pageforcrawling.text.find('Нижестоящие избирательные комиссии')
+        end=pageforcrawling.text.find('</select>')
+        workingpage=pageforcrawling.text[start:end]
+        listing=workingpage.split('</option>')
+        listing=listing[1:len(listing)]
+        for i in range(0, len(listing)):
+            listing[i]=listing[i].lstrip('<option value="')
+            listing[i].find('"')
+            listing[i]=listing[i] [0:(listing[i].find('"'))]
+            listing[i]=listing[i].replace('amp;', '')
+            root.update()
 
-    filecsv.close()
-    progbar.stop()
+        listingfin=[]
+        for k in range (len(listing)-1):
+            listingfin.append(gettik(listing[k]))
+            progbar.step(amount=3)
+            root.update()
+
+        ###opening csv
+        filecsv=open(lbl+' PR.csv', encoding="utf-8", mode="w")
+        filename=(lbl+' PR.csv')
+        #writing variable names for the csv file
+        for vlength in range(19):
+            filecsv.write('v'+str(vlength+1)+',')
+            progbar.step(amount=3)
+        for vlength in range(19, 33):
+            filecsv.write('v'+ str(vlength+1)+',' + 'v'+str(vlength+1)+'.1,')
+            progbar.step(amount=3)
+        filecsv.write('\n')
+
+        #getting the data for the csv file
+        try:
+            for num_tik_row in range(len(listingfin)):
+                try:
+                    for num_tik_col in range(len(listingfin[num_tik_row])):
+                        for j in range (len(getlistuik(listingfin[num_tik_row][num_tik_col]))):
+                            filecsv.write(reqdata(getpageuik_pr(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
+                            progbar.step(amount=3)
+                            root.update()
+                except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
+                    continue
+                except RecursionError:
+                    filecsv.close()
+                    connectionerror()
+                    progbar.stop()
+                    root.update()
+
+        filecsv.close()
+        progbar.stop()
 
 
 #button press command:
@@ -152,15 +166,13 @@ def start():
     labelact.configure(text='Загружаю данные...')
     labelact.pack()
     root.update()
-    try:
-        guistart(reg, t_elect)
-        labelact.configure(text='Готово!')
-        comboboxreg.config(state='readonly')
-        comboboxtype.config(state='readonly')
-        btn.config(state='normal')
-        root.update()
-    except requests.exceptions.ConnectionError:
-        connectionerror()
+    guistart(reg, t_elect)
+    labelact.configure(text='Готово!')
+    comboboxreg.config(state='readonly')
+    comboboxtype.config(state='readonly')
+    btn.config(state='normal')
+    root.update()
+
 
 def connectionerror():        
     labelact.config(text='')
