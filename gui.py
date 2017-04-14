@@ -90,7 +90,7 @@ def fptp(url, lbl):
 #for party lists:
 def pr(url, lbl):
     progbar.start()
-    flag=0
+    flag=1
     #writing a codebook:
     file=open(lbl+ ' codebook PR.txt', encoding="utf-8", mode="w")
     file.write(textpr)
