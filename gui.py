@@ -35,7 +35,7 @@ def fptp(url, lbl):
             codebooklist.append(reqvarnames(getpageuik(getlistuik(listingfin[num_tik_row][0])[0])))
             progbar.step(amount=3)
             root.update()
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        except RecursionError:
             connectionerror()
             progbar.stop()
         except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
@@ -70,7 +70,7 @@ def fptp(url, lbl):
                     filecsv.write(reqdata(getpageuik(getlistuik(listingfin[num_tik_row][num_tik_col])[j])))
                     progbar.step(amount=3)
                     root.update()       
-        except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+        except RecursionError:
             filecsv.close()
             connectionerror()
             progbar.stop()
@@ -131,7 +131,7 @@ def pr(url, lbl):
                         root.update()
             except (requests.exceptions.MissingSchema, requests.exceptions.InvalidSchema, IndexError):
                 continue
-    except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
+    except RecursionError:
         filecsv.close()
         connectionerror()
         progbar.stop()
