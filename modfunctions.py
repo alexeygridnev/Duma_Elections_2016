@@ -5,11 +5,6 @@
 import requests
 import bs4
 import time
-import sys
-
-#setting the limit amount of reconnections by setting the limit of recursion, 
-#to make program stop reconnecting to the server after 100 retrials
-sys.setrecursionlimit(100)
 
 #getting variable names from the page of UIK
 def reqvarnames(url, timeout=2):
@@ -24,9 +19,9 @@ def reqvarnames(url, timeout=2):
         datalist.append('Номер УИК')
         ##getting all the variable names
         docfin=docbs.findAll(align="left")
-        for i in range (len(docfin)):
-            datalist.append(docfin[i].text)
-        return(datalist)
+        for item in docfin:
+            datalist.append(item.text)
+        return datalist
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         time.sleep(10)
         return reqvarnames(url)
@@ -73,7 +68,7 @@ def reqdata(url, timeout=2):
         string=string.rstrip(',')
         string=string+'\n'
         datastring=string
-        return(datastring) ##returns a string!
+        return datastring ##returns a string!
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         time.sleep(10)
         return reqdata(url)
@@ -90,11 +85,11 @@ def gettik(area):
         workingpage=pageforcrawling.text[start:end]
         listingtik=workingpage.split('</option>')
         listingtik=listingtik[1:len(listingtik)]
-        for i in range(len(listingtik)):
-            listingtik[i]=listingtik[i].lstrip('<option value="')
-            listingtik[i]=listingtik[i] [0:(listingtik[i].find('">'))]
-            listingtik[i]=listingtik[i].replace('amp;', '')
-        return(listingtik)
+        for item in listingtik:
+            item=item.lstrip('<option value="')
+            item=item[0:item.find('">'))]
+            item=item.replace('amp;', '')
+        return listingtik
     except (requests.exceptions.ConnectionError, requests.exceptions.Timeout):
         time.sleep(10)
         return gettik(area)
