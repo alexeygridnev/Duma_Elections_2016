@@ -16,7 +16,7 @@ def region_corr(filename):
     return df_fin
     
 
-path='/home/aleksei/Документы/SNS-related files/SNS_Studies/Python/All_Russia_2016PR/All_Russia_2016PR'
+path='...' #path to raw data on your computer
 endfile=open('Correlations.csv', "w")
 endfile.write('Region,ER,LDPR,KPRF,SR,Yabloko,turnout,take_home\n')
 
@@ -53,7 +53,6 @@ for entry in os.scandir(path):
 endfile.close()
        
 dfnew=pandas.read_csv('Correlations.csv')
-print(dfnew.corr())
 ##
 
 
